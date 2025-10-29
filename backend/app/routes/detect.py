@@ -2,23 +2,36 @@ from fastapi import APIRouter, Request
 from app.detector.entropy import calculate_entropy
 from app.database import SessionLocal
 from app.models import Detection
-import os
+import pickle, numpy as np, os
 
 router = APIRouter()
 
-def block_ip(ip):
-    os.system(f"netsh advfirewall firewall add rule name='Block {ip}' dir=in action=block remoteip={ip}")
-    print(f"🚫 Blocked IP: {ip}")
+# Load ML model once at startup
+model_path = "model/ddos_model.pkl"
+with open(model_path, "rb") as f:
+    ml_model = pickle.load(f)
 
+def block_ip(ip):
+    os.system(f"netsh advfirewall firewall add rule name='Block_{ip}' dir=in action=block remoteip={ip}")
+    print(f"🚫 Blocked IP: {ip}")
 
 @router.post("/detect")
 async def detect_ddos(request: Request):
     data = await request.json()
     ip_list = data.get("ip_list", [])
+    features = data.get("features", [])  # feature list from dataset if needed
 
     entropy_value = calculate_entropy(ip_list)
 
-    if entropy_value < 1.0:
+    # ML Prediction
+    if features:
+       prediction = int(ml_model.predict(np.array(features[:8]).reshape(1, -1))[0])
+
+    else:
+        prediction = "Normal"
+
+    # Hybrid Decision
+    if entropy_value < 1.0 or prediction == "DDoS":
         result = "⚠️ Possible DDoS attack detected"
         for ip in set(ip_list):
             block_ip(ip)
@@ -32,21 +45,7 @@ async def detect_ddos(request: Request):
     db.close()
 
     return {
-        "entropy": entropy_value,
-        "status": result
-    }
-
-
-
-@router.post("/unblock")
-async def unblock_ip(request: Request):
-    data = await request.json()
-    ip_list = data.get("ip_list", [])
-
-    unblocked_ips = []
-    for ip in ip_list:
-        command = f"netsh advfirewall firewall delete rule name='Block {ip}'"
-        os.system(command)
-        unblocked_ips.append(ip)
-
-    return {"message": "✅ Unblocked IPs", "ips": unblocked_ips}
+    "entropy": float(entropy_value),
+    "ml_prediction": prediction,
+    "status": result
+}
