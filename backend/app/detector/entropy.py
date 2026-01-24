@@ -10,7 +10,7 @@ def calculate_entropy(ip_list):
     total = sum(freq.values())
 
     entropy = 0.0
-    for count in freq.values():
+    for count in freq.values(): 
         p = count / total
         entropy -= p * math.log2(p)
 
