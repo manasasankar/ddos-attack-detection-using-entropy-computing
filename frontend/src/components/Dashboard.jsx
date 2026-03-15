@@ -52,7 +52,11 @@ function Dashboard() {
   const handleUnblock = async () => {
     try {
       const res = await axios.post("http://127.0.0.1:8000/unblock");
-      alert(res.data.message);
+      const extra =
+        res.data.unblocked_ips && res.data.unblocked_ips.length > 0
+          ? `\n\nUnblocked IPs:\n- ${res.data.unblocked_ips.join("\n- ")}`
+          : "";
+      alert(res.data.message + extra);
     } catch (err) {
       console.error(err);
     }
@@ -72,24 +76,32 @@ function Dashboard() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#f8fafc] text-gray-900">
-      <h1 className="text-3xl font-bold mb-4">DDoS Entropy Detector</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen text-gray-100">
+      <h1 className="text-3xl font-bold mb-2 tracking-[0.25em] uppercase">
+        Entropy Scanner
+      </h1>
+      <p className="text-xs uppercase tracking-[0.3em] text-red-300 mb-6">
+        Live anomaly sweep across the network
+      </p>
 
       <input
         value={ipList}
         onChange={(e) => setIpList(e.target.value)}
-        className="p-2 rounded border border-gray-300 w-80 mb-4"
-        placeholder="Enter comma-separated IPs"
+        className="p-2 rounded border border-gray-700 w-80 mb-4 bg-black/40 text-red-100"
+        placeholder="Enter comma-separated IPs to scan"
       />
 
-      <div className="flex gap-4">
-        <button onClick={handleDetect} className="bg-blue-500 px-4 py-2 rounded text-white">
-          Detect
+      <div className="flex gap-4 mb-2">
+        <button onClick={handleDetect}>
+          Detect Anomaly
         </button>
-        <button onClick={handleUnblock} className="bg-red-500 px-4 py-2 rounded text-white">
-          Unblock All
+        <button onClick={handleUnblock}>
+          Purge Blocks
         </button>
       </div>
+      <p className="text-[0.65rem] text-slate-400 uppercase tracking-[0.22em]">
+        high entropy ≈ calm · low entropy ≈ disturbance
+      </p>
 
       {entropy && (
         <div className="mt-6 p-4 card text-center w-[300px]">
