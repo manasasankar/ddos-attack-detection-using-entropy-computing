@@ -9,6 +9,7 @@ class Detection(Base):
     id = Column(Integer, primary_key=True, index=True)
     entropy = Column(Float)
     status = Column(String)
+    timestamp = Column(DateTime, default=datetime.utcnow, index=True)
 
 
 class SuspiciousIP(Base):
@@ -18,3 +19,16 @@ class SuspiciousIP(Base):
     ip = Column(String, index=True)
     count = Column(Integer, default=0)
     last_detected = Column(DateTime, default=datetime.utcnow)
+
+
+class AttackLog(Base):
+    __tablename__ = "attack_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    ip_address = Column(String, index=True)
+    request_count = Column(Integer, default=0)
+    entropy_value = Column(Float)
+    status = Column(String)
+    reason = Column(String)
+    source = Column(String, default="realtime")
+    timestamp = Column(DateTime, default=datetime.utcnow, index=True)

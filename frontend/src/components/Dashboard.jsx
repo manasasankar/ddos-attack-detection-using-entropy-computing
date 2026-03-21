@@ -10,6 +10,10 @@ function Dashboard() {
   const [status, setStatus] = useState("");
   const [ipList, setIpList] = useState("");
   const [history, setHistory] = useState([]);
+  const [reason, setReason] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [monitorState, setMonitorState] = useState({ running: false, mode: "idle", progress: 0 });
 
   // 🧩 Step 1: Load previous data when app opens
   useEffect(() => {
@@ -34,17 +38,27 @@ function Dashboard() {
 
   // 🧩 Step 3: Detect DDoS entropy
   const handleDetect = async () => {
+    setLoading(true);
+    setError("");
     try {
-      const ips = ipList.split(",").map((ip) => ip.trim());
+      const ips = ipList.split(",").map((ip) => ip.trim()).filter(Boolean);
+      if (ips.length === 0) {
+        setError("Please enter at least one valid IP.");
+        return;
+      }
       const res = await axios.post("http://127.0.0.1:8000/detect", {
         ip_list: ips,
         features: [100, 2000, 1.5, 3, 600, 40, 30, 70],
       });
       setEntropy(res.data.entropy.toFixed(4));
       setStatus(res.data.status);
+      setReason(res.data.reason || "");
       setHistory((prev) => [...prev, { entropy: res.data.entropy, status: res.data.status }]);
     } catch (err) {
       console.error(err);
+      setError("Detection failed. Check backend health and try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,8 +73,43 @@ function Dashboard() {
       alert(res.data.message + extra);
     } catch (err) {
       console.error(err);
+      setError("Unblock action failed.");
     }
   };
+
+  const handleMonitorAction = async (action) => {
+    setError("");
+    try {
+      const url =
+        action === "start"
+          ? "http://127.0.0.1:8000/monitor/start?simulation=false"
+          : "http://127.0.0.1:8000/monitor/stop";
+      await axios.post(url);
+      await refreshMonitorState();
+    } catch (err) {
+      console.error(err);
+      setError("Could not change real-time monitor state.");
+    }
+  };
+
+  const refreshMonitorState = async () => {
+    try {
+      const res = await axios.get("http://127.0.0.1:8000/monitor/state");
+      setMonitorState({
+        running: res.data.running,
+        mode: res.data.mode,
+        progress: res.data.progress || 0,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    refreshMonitorState();
+    const interval = setInterval(refreshMonitorState, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const chartData = {
     labels: history.map((_, i) => i + 1),
@@ -92,13 +141,24 @@ function Dashboard() {
       />
 
       <div className="flex gap-4 mb-2">
-        <button onClick={handleDetect}>
-          Detect Anomaly
+        <button onClick={handleDetect} disabled={loading}>
+          {loading ? "Detecting..." : "Detect Anomaly"}
         </button>
         <button onClick={handleUnblock}>
           Purge Blocks
         </button>
+        <button onClick={() => handleMonitorAction("start")}>
+          Start Live Capture
+        </button>
+        <button onClick={() => handleMonitorAction("stop")}>
+          Stop Live Capture
+        </button>
       </div>
+      <p className="text-xs text-slate-300 mb-2">
+        Capture: <b>{monitorState.running ? "running" : "stopped"}</b> ({monitorState.mode}) | Progress:{" "}
+        <b>{monitorState.progress}%</b>
+      </p>
+      {error && <p className="text-sm text-red-300 mb-2">{error}</p>}
       <p className="text-[0.65rem] text-slate-400 uppercase tracking-[0.22em]">
         high entropy ≈ calm · low entropy ≈ disturbance
       </p>
@@ -107,6 +167,7 @@ function Dashboard() {
         <div className="mt-6 p-4 card text-center w-[300px]">
           <p>Entropy: <b>{entropy}</b></p>
           <p>Status: <b>{status}</b></p>
+          {reason && <p>Reason: <b>{reason}</b></p>}
         </div>
       )}
 

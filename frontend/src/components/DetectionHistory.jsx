@@ -4,6 +4,7 @@ import axios from "axios";
 function DetectionHistory() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchHistory();
@@ -11,11 +12,13 @@ function DetectionHistory() {
 
   const fetchHistory = async () => {
     setLoading(true);
+    setError("");
     try {
       const res = await axios.get("http://127.0.0.1:8000/history");
       setHistory(res.data);
     } catch (error) {
       console.error(error);
+      setError("Could not fetch detection history.");
     } finally {
       setLoading(false);
     }
@@ -36,6 +39,7 @@ function DetectionHistory() {
           {loading ? "Refreshing..." : "Refresh"}
         </button>
       </div>
+      {error && <p className="text-sm text-red-400 mb-2">{error}</p>}
 
       {history.length === 0 ? (
         <p className="text-sm text-slate-400">No detections recorded yet.</p>
@@ -48,6 +52,7 @@ function DetectionHistory() {
                   <th className="px-3 py-2 text-left">ID</th>
                   <th className="px-3 py-2 text-left">Entropy</th>
                   <th className="px-3 py-2 text-left">Status</th>
+                  <th className="px-3 py-2 text-left">Time</th>
                 </tr>
               </thead>
               <tbody>
@@ -71,6 +76,7 @@ function DetectionHistory() {
                         {item.status}
                       </span>
                     </td>
+                    <td className="px-3 py-2">{item.timestamp || "-"}</td>
                   </tr>
                 ))}
               </tbody>

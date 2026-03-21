@@ -5,6 +5,7 @@ import SuspiciousIPAnalysis from "./components/SuspiciousIPAnalysis.jsx";
 import LiveEntropy from "./components/LiveEntropy.jsx";
 import AttackStats from "./components/AttackStats.jsx";
 import SystemHealth from "./components/SystemHealth.jsx";
+import AttackLogTable from "./components/AttackLogTable.jsx";
 import "./App.css";
 
 function App() {
@@ -22,6 +23,8 @@ function App() {
         return <AttackStats />;
       case "health":
         return <SystemHealth />;
+      case "logs":
+        return <AttackLogTable />;
       default:
         return <Dashboard />;
     }
@@ -61,6 +64,10 @@ function App() {
         <button className={navButtonClass("health")} onClick={() => setActivePage("health")}>
           <span className="nav-accent-dot" />
           <span>System Health</span>
+        </button>
+        <button className={navButtonClass("logs")} onClick={() => setActivePage("logs")}>
+          <span className="nav-accent-dot" />
+          <span>Attack Logs</span>
         </button>
       </aside>
       <main className="horror-main">{renderPage()}</main>

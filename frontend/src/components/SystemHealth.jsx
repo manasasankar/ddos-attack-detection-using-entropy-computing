@@ -47,6 +47,18 @@ function SystemHealth() {
               {health.model_loaded ? "yes" : "no"}
             </span>
           </p>
+          <p>
+            <b>Realtime Mode:</b> <span>{health.realtime_mode || "idle"}</span>
+          </p>
+          <p>
+            <b>Capture Running:</b>{" "}
+            <span className={statusClass(health.capture_running)}>{health.capture_running ? "yes" : "no"}</span>
+          </p>
+          {health.db_error && (
+            <p className="text-xs text-red-500">
+              <b>DB Error:</b> {health.db_error}
+            </p>
+          )}
         </div>
       )}
     </div>

@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.routes import detect
 from fastapi.middleware.cors import CORSMiddleware
+from app.database import Base, engine
 
 app = FastAPI()
 
@@ -13,6 +14,11 @@ app.add_middleware(
 )
 
 app.include_router(detect.router)
+
+
+@app.on_event("startup")
+def on_startup():
+    Base.metadata.create_all(bind=engine)
 
 
 @app.get("/")

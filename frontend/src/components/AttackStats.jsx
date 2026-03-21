@@ -69,6 +69,15 @@ function AttackStats() {
         </div>
       </div>
 
+      {stats.comparison && (
+        <div className="card w-full max-w-2xl mb-4">
+          <p className="text-sm">
+            Detection comparison - Entropy: <b>{stats.comparison.entropy_status || "-"}</b> | Random Forest:{" "}
+            <b>{stats.comparison.rf_status || "-"}</b> | Final: <b>{stats.comparison.final_status || "-"}</b>
+          </p>
+        </div>
+      )}
+
       {stats.per_day.length > 0 ? (
         <div className="bg-white rounded-lg shadow-md p-4 max-w-2xl">
           <Bar data={data} />
