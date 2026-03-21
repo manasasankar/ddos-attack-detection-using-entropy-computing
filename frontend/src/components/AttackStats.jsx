@@ -39,47 +39,50 @@ function AttackStats() {
       {
         label: "Detections per day",
         data: stats.per_day.map((d) => d.count),
-        backgroundColor: "rgba(37, 99, 235, 0.6)",
+        backgroundColor: "rgba(34, 211, 238, 0.65)",
+        borderColor: "rgba(167, 139, 250, 0.9)",
+        borderWidth: 1,
       },
     ],
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-semibold mb-4 text-blue-700">Attack Statistics</h2>
+    <div className="panel">
+      <h2 className="page-title">Attack Statistics</h2>
+      <p className="page-subtitle">Aggregated detections and model comparison snapshot</p>
 
-      <div className="flex flex-wrap gap-4 mb-6">
-        <div className="card w-[200px]">
-          <p className="text-xs text-gray-500 mb-1">Total Detections</p>
-          <p className="text-2xl font-bold">{stats.total_detections}</p>
+      <div className="metric-grid">
+        <div className="metric-card">
+          <p className="metric-label">Total Detections</p>
+          <p className="metric-value">{stats.total_detections}</p>
         </div>
-        <div className="card w-[200px]">
-          <p className="text-xs text-gray-500 mb-1">Attacks Detected</p>
-          <p className="text-2xl font-bold text-red-600">{stats.attack_count}</p>
+        <div className="metric-card">
+          <p className="metric-label">Attacks Detected</p>
+          <p className="metric-value text-rose-300">{stats.attack_count}</p>
         </div>
-        <div className="card w-[200px]">
-          <p className="text-xs text-gray-500 mb-1">Normal Traffic</p>
-          <p className="text-2xl font-bold text-green-600">{stats.normal_count}</p>
+        <div className="metric-card">
+          <p className="metric-label">Normal Traffic</p>
+          <p className="metric-value text-emerald-300">{stats.normal_count}</p>
         </div>
-        <div className="card w-[220px]">
-          <p className="text-xs text-gray-500 mb-1">Average Entropy</p>
-          <p className="text-2xl font-bold">
+        <div className="metric-card">
+          <p className="metric-label">Average Entropy</p>
+          <p className="metric-value">
             {stats.average_entropy != null ? stats.average_entropy.toFixed(4) : "—"}
           </p>
         </div>
       </div>
 
       {stats.comparison && (
-        <div className="card w-full max-w-2xl mb-4">
-          <p className="text-sm">
-            Detection comparison - Entropy: <b>{stats.comparison.entropy_status || "-"}</b> | Random Forest:{" "}
-            <b>{stats.comparison.rf_status || "-"}</b> | Final: <b>{stats.comparison.final_status || "-"}</b>
+        <div className="chip mb-4">
+          <p className="text-sm m-0">
+            Entropy: <b>{stats.comparison.entropy_status || "-"}</b> | RF: <b>{stats.comparison.rf_status || "-"}</b>{" "}
+            | Final: <b>{stats.comparison.final_status || "-"}</b>
           </p>
         </div>
       )}
 
       {stats.per_day.length > 0 ? (
-        <div className="bg-white rounded-lg shadow-md p-4 max-w-2xl">
+        <div className="chart-container max-w-2xl">
           <Bar data={data} />
         </div>
       ) : (

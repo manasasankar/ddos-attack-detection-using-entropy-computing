@@ -125,11 +125,11 @@ function Dashboard() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen text-gray-100">
-      <h1 className="text-3xl font-bold mb-2 tracking-[0.25em] uppercase">
+    <div className="panel flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] text-gray-100">
+      <h1 className="page-title text-center mb-2">
         Entropy Scanner
       </h1>
-      <p className="text-xs uppercase tracking-[0.3em] text-red-300 mb-6">
+      <p className="page-subtitle text-center mb-5">
         Live anomaly sweep across the network
       </p>
 
@@ -140,7 +140,7 @@ function Dashboard() {
         placeholder="Enter comma-separated IPs to scan"
       />
 
-      <div className="flex gap-4 mb-2">
+      <div className="flex flex-wrap gap-3 mb-2 justify-center">
         <button onClick={handleDetect} disabled={loading}>
           {loading ? "Detecting..." : "Detect Anomaly"}
         </button>
@@ -154,7 +154,12 @@ function Dashboard() {
           Stop Live Capture
         </button>
       </div>
-      <p className="text-xs text-slate-300 mb-2">
+      <div className="progress-wrap">
+        <div className="progress-track">
+          <div className="progress-fill" style={{ width: `${monitorState.progress}%` }} />
+        </div>
+      </div>
+      <p className="text-xs text-slate-300 mb-1">
         Capture: <b>{monitorState.running ? "running" : "stopped"}</b> ({monitorState.mode}) | Progress:{" "}
         <b>{monitorState.progress}%</b>
       </p>

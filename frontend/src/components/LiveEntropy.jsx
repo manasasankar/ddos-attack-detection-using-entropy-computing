@@ -39,16 +39,16 @@ function LiveEntropy() {
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-semibold mb-4 text-blue-700">Live Entropy Monitoring</h2>
-      <p className="mb-4 text-sm text-gray-600">
+    <div className="panel">
+      <h2 className="page-title">Live Entropy Monitoring</h2>
+      <p className="page-subtitle">
         Auto-refreshing view of the most recent detections and entropy trend.
       </p>
 
       {loading ? <p>Loading live stream...</p> : null}
       {error ? <p className="text-red-400">{error}</p> : null}
       {latest ? (
-        <div className="flex gap-4 mb-6">
+        <div className="flex flex-wrap gap-4 mb-6">
           <div className="card w-[260px]">
             <p className="text-sm text-gray-500 mb-1">Latest Entropy</p>
             <p className="text-2xl font-bold">{Number(latest.entropy).toFixed(4)}</p>

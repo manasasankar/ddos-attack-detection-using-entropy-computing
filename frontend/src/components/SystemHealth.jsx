@@ -25,9 +25,9 @@ function SystemHealth() {
     val === "ok" || val === true ? "text-green-600" : "text-red-600";
 
   return (
-    <div>
-      <h2 className="text-2xl font-semibold mb-4 text-blue-700">System Health</h2>
-      <p className="mb-4 text-sm text-gray-600">
+    <div className="panel">
+      <h2 className="page-title">System Health</h2>
+      <p className="page-subtitle">
         Quick overview of backend components and dependencies.
       </p>
 
@@ -36,7 +36,7 @@ function SystemHealth() {
       </button>
 
       {health && (
-        <div className="card max-w-md text-left text-sm">
+        <div className="card max-w-2xl text-left text-sm">
           <p>
             <b>Database:</b>{" "}
             <span className={statusClass(health.database)}>{health.database}</span>

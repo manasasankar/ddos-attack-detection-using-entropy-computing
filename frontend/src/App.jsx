@@ -6,6 +6,7 @@ import LiveEntropy from "./components/LiveEntropy.jsx";
 import AttackStats from "./components/AttackStats.jsx";
 import SystemHealth from "./components/SystemHealth.jsx";
 import AttackLogTable from "./components/AttackLogTable.jsx";
+import AlgorithmComparison from "./components/AlgorithmComparison.jsx";
 import "./App.css";
 
 function App() {
@@ -25,6 +26,8 @@ function App() {
         return <SystemHealth />;
       case "logs":
         return <AttackLogTable />;
+      case "comparison":
+        return <AlgorithmComparison />;
       default:
         return <Dashboard />;
     }
@@ -68,6 +71,10 @@ function App() {
         <button className={navButtonClass("logs")} onClick={() => setActivePage("logs")}>
           <span className="nav-accent-dot" />
           <span>Attack Logs</span>
+        </button>
+        <button className={navButtonClass("comparison")} onClick={() => setActivePage("comparison")}>
+          <span className="nav-accent-dot" />
+          <span>Algo Comparison</span>
         </button>
       </aside>
       <main className="horror-main">{renderPage()}</main>

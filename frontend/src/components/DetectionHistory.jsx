@@ -25,15 +25,11 @@ function DetectionHistory() {
   };
 
   return (
-    <div>
+    <div className="panel">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-xl font-semibold tracking-[0.18em] uppercase text-cyan-300">
-            Detection History
-          </h2>
-          <p className="text-[0.7rem] text-slate-400 uppercase tracking-[0.22em] mt-1">
-            Past entropy decisions · most recent first
-          </p>
+          <h2 className="page-title">Detection History</h2>
+          <p className="page-subtitle">Past entropy decisions · most recent first</p>
         </div>
         <button onClick={fetchHistory} disabled={loading}>
           {loading ? "Refreshing..." : "Refresh"}
@@ -44,28 +40,29 @@ function DetectionHistory() {
       {history.length === 0 ? (
         <p className="text-sm text-slate-400">No detections recorded yet.</p>
       ) : (
-        <div className="card overflow-hidden">
-          <div className="max-h-[360px] overflow-y-auto custom-scrollbar">
-            <table className="w-full text-xs text-slate-200 border-collapse">
+        <div className="table-shell max-h-[390px]">
+          <div className="custom-scrollbar">
+            <table className="data-table">
+              <colgroup>
+                <col style={{ width: "10%" }} />
+                <col style={{ width: "15%" }} />
+                <col style={{ width: "40%" }} />
+                <col style={{ width: "35%" }} />
+              </colgroup>
               <thead>
-                <tr className="bg-slate-900/80 text-cyan-300 uppercase tracking-[0.16em]">
-                  <th className="px-3 py-2 text-left">ID</th>
-                  <th className="px-3 py-2 text-left">Entropy</th>
-                  <th className="px-3 py-2 text-left">Status</th>
-                  <th className="px-3 py-2 text-left">Time</th>
+                <tr>
+                  <th>ID</th>
+                  <th>Entropy</th>
+                  <th>Status</th>
+                  <th>Time</th>
                 </tr>
               </thead>
               <tbody>
-                {history.map((item, idx) => (
-                  <tr
-                    key={item.id}
-                    className={`border-t border-slate-800/70 ${
-                      idx % 2 === 0 ? "bg-slate-900/40" : "bg-slate-900/20"
-                    } hover:bg-sky-900/30 transition-colors`}
-                  >
-                    <td className="px-3 py-2">{item.id}</td>
-                    <td className="px-3 py-2">{Number(item.entropy).toFixed(4)}</td>
-                    <td className="px-3 py-2">
+                {history.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.id}</td>
+                    <td>{Number(item.entropy).toFixed(4)}</td>
+                    <td>
                       <span
                         className={
                           item.status?.includes("Possible DDoS")
@@ -76,7 +73,7 @@ function DetectionHistory() {
                         {item.status}
                       </span>
                     </td>
-                    <td className="px-3 py-2">{item.timestamp || "-"}</td>
+                    <td>{item.timestamp || "-"}</td>
                   </tr>
                 ))}
               </tbody>

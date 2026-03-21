@@ -25,38 +25,48 @@ function AttackLogTable() {
   }, []);
 
   return (
-    <div>
+    <div className="panel">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Attack Log Table</h2>
+        <div>
+          <h2 className="page-title">Attack Log Table</h2>
+          <p className="page-subtitle">Structured evidence for flagged events</p>
+        </div>
         <button onClick={fetchLogs} disabled={loading}>
           {loading ? "Refreshing..." : "Refresh"}
         </button>
       </div>
       {error && <p className="text-red-400 mb-2">{error}</p>}
-      <div className="card overflow-auto max-h-[420px]">
-        <table className="w-full text-sm">
+      <div className="table-shell max-h-[430px]">
+        <table className="data-table">
+          <colgroup>
+            <col style={{ width: "16%" }} />
+            <col style={{ width: "15%" }} />
+            <col style={{ width: "16%" }} />
+            <col style={{ width: "13%" }} />
+            <col style={{ width: "40%" }} />
+          </colgroup>
           <thead>
             <tr>
-              <th className="text-left p-2">IP Address</th>
-              <th className="text-left p-2">Request Count</th>
-              <th className="text-left p-2">Entropy Value</th>
-              <th className="text-left p-2">Status</th>
-              <th className="text-left p-2">Reason</th>
+              <th>IP Address</th>
+              <th>Request Count</th>
+              <th>Entropy Value</th>
+              <th>Status</th>
+              <th>Reason</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.id} className="border-t border-slate-700">
-                <td className="p-2">{row.ip_address}</td>
-                <td className="p-2">{row.request_count}</td>
-                <td className="p-2">{Number(row.entropy_value || 0).toFixed(4)}</td>
-                <td className="p-2">{row.status}</td>
-                <td className="p-2">{row.reason}</td>
+              <tr key={row.id}>
+                <td>{row.ip_address}</td>
+                <td>{row.request_count}</td>
+                <td>{Number(row.entropy_value || 0).toFixed(4)}</td>
+                <td>{row.status}</td>
+                <td>{row.reason}</td>
               </tr>
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={5} className="p-3 text-slate-400">
+                <td colSpan={5} className="text-slate-400">
                   No attack logs available yet.
                 </td>
               </tr>
